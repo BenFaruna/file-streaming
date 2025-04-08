@@ -3,11 +3,12 @@ const fs = require("fs")
 async function main(){
     const file = fs.createReadStream("big.csv")
 
-    // const file = fs.readFileSync('small.csv', 'utf8')
+    file.on("end", ()=> file.close())
+
     const requestInit = {
         body: file,
-        keepalive: false,
         method: "POST",
+        duplex: "half",
     }
 
     const resp = await fetch("http://localhost:8080", requestInit)

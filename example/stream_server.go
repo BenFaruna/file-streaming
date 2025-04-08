@@ -1,10 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net"
+	"os"
 	//"net/http"
 )
 
@@ -26,15 +27,24 @@ func main() {
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
-
-	buf := bytes.NewBuffer(nil)
-	n, err := buf.ReadFrom(conn)
+	out, err := os.OpenFile("temp.txt", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
-	fmt.Printf("Read %d bytes: %s\n", n, buf.String())
+	var total int64
 
-	//fmt.Println(conn.LocalAddr(), conn.RemoteAddr())
-	//conn.Write([]byte("Hello world!\n"))
+	for {
+		n, err := io.CopyN(out, conn, 1024)
+		total += n
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Println(err)
+			break
+		}
+	}
+
+	fmt.Printf("Read %d bytes: %s\n", total, out.Name())
 }

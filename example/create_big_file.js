@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 async function main() {
-    const writeStream = fs.createWriteStream("big.csv");
+    const writeStream = fs.createWriteStream("small.csv");
     writeStream.write("index, data\n")
     for (let i = 0; i < 1e6; i++){
         const writeable = writeStream.write(`${i}, ${i * 2}\n`)
