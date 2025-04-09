@@ -1,9 +1,8 @@
 const fs = require("fs")
 
 async function main(){
-    const file = fs.createReadStream("big.csv")
-
-    file.on("end", ()=> file.close())
+    const file = fs.createReadStream("small.csv")
+    file.once("end", ()=> file.close())
 
     const requestInit = {
         body: file,
@@ -11,7 +10,7 @@ async function main(){
         duplex: "half",
     }
 
-    const resp = await fetch("http://localhost:8080", requestInit)
+    const resp = await fetch("http://localhost:8080/upload", requestInit)
 
     console.log(resp.body)
 }
